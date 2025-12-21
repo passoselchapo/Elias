@@ -1,3 +1,4 @@
+
 """
 app/api.py
 
@@ -6,7 +7,7 @@ Ele atua como uma camada fina, delegando a lógica principal ao orquestrador.
 Os comentários estão em português.
 """
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
 
@@ -23,18 +24,17 @@ app = FastAPI(
 # Define o modelo Pydantic para a requisição de chat
 class ChatRequest(BaseModel):
     message: str
+
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest) -> Dict[str, Any]:
     """
     Endpoint principal para interagir com o assistente.
-    Recebe uma mensagem do usuário e uma persona opcional,
-    e retorna a resposta do assistente, score de importância e resumo.
+    Recebe uma mensagem do usuário e retorna a resposta do assistente.
     """
     try:
-        # Delega a lógica de tratamento da mensagem ao orquestrador
+        # Delega a lógica de tratamento da mensagem ao orquestrador, apenas com a mensagem
         response_data = await orchestrator.handle_message(
-            user_message=request.message,
-            persona=request.persona
+            user_message=request.message
         )
         return response_data
     except Exception as e:
